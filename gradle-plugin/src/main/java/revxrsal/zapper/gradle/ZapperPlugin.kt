@@ -39,8 +39,12 @@ class ZapperPlugin : Plugin<Project> {
                 val extension = project.zapper
                 project.createRepositoriesFile(outputDir, extension)
 
-                if (project.plugins.hasPlugin(ShadowPlugin::class)) {
-                    project.createRelocationsFile(outputDir, extension)
+                if (extension.relocations.isNotEmpty()) {
+                    if (project.plugins.hasPlugin(ShadowPlugin::class)) {
+                        project.createRelocationsFile(outputDir, extension)
+                    } else {
+                        error("Relocations require the ShadowJar plugin")
+                    }
                 }
 
                 createZappersFile(outputDir, runtimeLib)
