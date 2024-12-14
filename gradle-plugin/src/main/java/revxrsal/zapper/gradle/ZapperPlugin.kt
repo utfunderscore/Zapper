@@ -74,6 +74,7 @@ private fun Project.createRelocationsFile(outputDir: File, extension: ZapperExte
                 relocationRules.add("${it.pattern}:${extension.relocationPrefix}.${it.newPattern}")
                 relocate(it.pattern, "${extension.relocationPrefix}.${it.newPattern}")
             }
+            relocate("revxrsal.zapper", "${extension.relocationPrefix}.zapper")
         }
         relocationsFile.writeText(relocationRules.joinToString("\n"))
     }
