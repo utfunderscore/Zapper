@@ -121,7 +121,7 @@ public final class RuntimeLibPluginConfiguration {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Throwable> T sneakyThrow(Throwable t) throws T {
+    private static <T extends Throwable> RuntimeException sneakyThrow(Throwable t) throws T {
         throw (T) t;
     }
 }
