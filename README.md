@@ -101,7 +101,7 @@ To add the Zapper API:
 <dependency>
     <groupId>io.github.revxrsal</groupId>
     <artifactId>zapper.api</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
     <scope>compile</scope>
 </dependency>
 ```
