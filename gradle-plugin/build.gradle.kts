@@ -19,7 +19,7 @@ gradlePlugin {
     plugins {
         create("zapper") {
             id = "io.github.revxrsal.zapper"
-            implementationClass = "io.github.revxrsal.zapper.ZapperPlugin"
+            implementationClass = "revxrsal.zapper.gradle.ZapperPlugin"
         }
     }
 }
