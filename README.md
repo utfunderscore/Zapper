@@ -98,7 +98,7 @@ Finally, build with `shadowJar`:
 
 ### With Maven
 
-Unfortunately, Maven usage is not as smooth as the Gradle one. However, you can use the API
+Sadly, Maven usage is not as seamless as the Gradle one. However, you can use the API
 provided by Zapper to download dependencies at runtime:
 
 To add the Zapper API:
@@ -164,7 +164,7 @@ public final class MyPlugin extends MyPluginBase {
 ```
 
 ### Extending custom JavaPlugin classes
-If you, for some reason, would like to extend a different class than a JavaPlugin, and is using the Gradle plugin, you can avoid extending the ZapperJavaPlugin class by doing the following:
+If you, for some reason, would like to extend a different class than a JavaPlugin, and are using the Gradle plugin, you can avoid extending the ZapperJavaPlugin class by doing the following:
 1. Declare a **base** class that extends the custom JavaPlugin class:
 ```java
 public abstract class MyPluginBase extends CustomJavaPlugin {
