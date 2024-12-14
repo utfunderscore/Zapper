@@ -97,7 +97,6 @@ provided by Zapper to download dependencies at runtime:
 To add the Zapper API:
 
 ```xml
-
 <dependency>
     <groupId>io.github.revxrsal</groupId>
     <artifactId>zapper.api</artifactId>
