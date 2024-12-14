@@ -14,6 +14,7 @@ open class ZapperExtension {
 
     fun repositories(configure: RepositoryDsl.() -> Unit) {
         val dsl = BasicRepositoryDsl()
+        dsl.mavenCentral()
         dsl.configure()
         _repositories = dsl.repositories
         useProjectRepositories = dsl.projectRepositories
