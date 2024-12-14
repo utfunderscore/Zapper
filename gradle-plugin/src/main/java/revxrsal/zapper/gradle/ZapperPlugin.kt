@@ -11,6 +11,8 @@ import org.gradle.kotlin.dsl.hasPlugin
 import org.gradle.kotlin.dsl.withType
 import java.io.File
 
+const val PLUGIN_VERSION: String = "1.0.0"
+
 class ZapperPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -46,6 +48,8 @@ class ZapperPlugin : Plugin<Project> {
                 configFile.writeText(extension.toPropertiesFile())
             }
         }
+
+        project.addZapperDependencies()
 
         project.tasks.withType(Jar::class.java).configureEach {
             dependsOn("generateZapperFiles")
@@ -95,4 +99,8 @@ private fun Project.createRepositoriesFile(outputDir: File, extension: ZapperExt
         }
     }
     repositoriesFile.writeText(repositories.joinToString("\n"))
+}
+
+private fun Project.addZapperDependencies() {
+    dependencies.add("implementation", "io.github.revxrsal:zapper.api:${PLUGIN_VERSION}")
 }

@@ -1,7 +1,7 @@
 plugins {
     `kotlin-dsl`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "1.1.0"
+    id("com.gradle.plugin-publish") version "1.2.1"
 }
 
 version = "1.0.0"
@@ -19,7 +19,11 @@ gradlePlugin {
     plugins {
         create("zapper") {
             id = "io.github.revxrsal.zapper"
+            displayName = "Zapper"
             implementationClass = "revxrsal.zapper.gradle.ZapperPlugin"
+            website = "https://github.com/Revxrsal/Zapper"
+            vcsUrl = "https://github.com/Revxrsal/Zapper"
+            tags = listOf("maven", "downloader", "runtime dependency")
         }
     }
 }
