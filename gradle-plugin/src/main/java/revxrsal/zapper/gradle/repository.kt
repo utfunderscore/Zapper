@@ -1,26 +1,51 @@
 package revxrsal.zapper.gradle
 
+/**
+ * A basic interface DSL for specifying repositories to be used
+ * for dependencies
+ */
 interface RepositoryDsl {
-    fun mavenCentral() = maven("https://repo.maven.apache.org/maven2/")
-    fun jitpack() = maven("https://jitpack.io/")
+
+    /**
+     * Adds the given repository to the repositories list
+     */
     fun maven(url: String)
-    fun useProjectRepositories()
+
+    /**
+     * Tells Zapper to include the project repositories for
+     * resolving dependencies
+     */
+    fun includeProjectRepositories()
 }
 
+/**
+ * A basic implementation of [RepositoryDsl]
+ */
 internal class BasicRepositoryDsl : RepositoryDsl {
-    val repositories = mutableListOf<String>()
-    var projectRepositories = false
 
+    /**
+     * The repositories list
+     */
+    val repositories = mutableListOf<String>()
+
+    /**
+     * Should project repositories be included?
+     */
+    var includeProjectRepositories = false
+
+    /**
+     * Adds the given repository to the repositories list
+     */
     override fun maven(url: String) {
         repositories.add(url)
     }
 
-    override fun useProjectRepositories() {
-        projectRepositories = true
+    /**
+     * Tells Zapper to include the project repositories for
+     * resolving dependencies
+     */
+    override fun includeProjectRepositories() {
+        includeProjectRepositories = true
     }
 }
 
-data class Relocation(
-    val pattern: String,
-    val newPattern: String
-)

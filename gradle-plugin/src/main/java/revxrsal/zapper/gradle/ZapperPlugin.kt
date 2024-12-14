@@ -11,25 +11,37 @@ import org.gradle.kotlin.dsl.hasPlugin
 import org.gradle.kotlin.dsl.withType
 import java.io.File
 
-const val PLUGIN_VERSION: String = "0.0.1"
+/**
+ * The plugin version
+ */
+private const val PLUGIN_VERSION: String = "0.0.1"
 
+/**
+ * The Zapper Gradle plugin collects information about the zapped dependencies
+ * and merges them into raw text files that are read by the Zapper API.
+ */
 class ZapperPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
+        if (!project.plugins.hasPlugin(ShadowPlugin::class)) {
+            error("ShadowJar is required by the Zapper Gradle plugin. Please add ShadowJar v8.11.0")
+        }
+
         project.extensions.create("zapper", ZapperExtension::class.java)
 
-        val runtimeLib = project.configurations.create("zap") {
+        // creates the 'zap' configuration
+        val zap = project.configurations.create("zap") {
             isCanBeResolved = true
             isCanBeConsumed = false
             description = "Marks a dependency for downloading at runtime"
         }
 
+        // include zapped dependencies as compileOnly
         project.afterEvaluate {
-            configurations.getByName("compileOnly").extendsFrom(runtimeLib)
+            configurations.getByName("compileOnly").extendsFrom(zap)
         }
 
         val outputDir = project.layout.buildDirectory.asFile.get().resolve("zapper")
-        val configFile = outputDir.resolve("config.properties")
         project.tasks.register("generateZapperFiles") {
             group = "build"
             description = "Generates information about dependencies to install and relocate at runtime"
@@ -40,15 +52,12 @@ class ZapperPlugin : Plugin<Project> {
                 project.createRepositoriesFile(outputDir, extension)
 
                 if (extension.relocations.isNotEmpty()) {
-                    if (project.plugins.hasPlugin(ShadowPlugin::class)) {
-                        project.createRelocationsFile(outputDir, extension)
-                    } else {
-                        error("Relocations require the ShadowJar plugin")
-                    }
+                    project.createRelocationsFile(outputDir, extension)
                 }
 
-                createZappersFile(outputDir, runtimeLib)
+                createZappersFile(outputDir, zap)
 
+                val configFile = outputDir.resolve("zapper.properties")
                 configFile.writeText(extension.toPropertiesFile())
             }
         }
@@ -62,13 +71,16 @@ class ZapperPlugin : Plugin<Project> {
                 include("dependencies.txt")
                 include("relocations.txt")
                 include("repositories.txt")
-                include("config.properties")
+                include("zapper.properties")
                 into("zapper")
             }
         }
     }
 }
 
+/**
+ * Generates the relocations.txt file
+ */
 private fun Project.createRelocationsFile(outputDir: File, extension: ZapperExtension) {
     val relocationsFile = outputDir.resolve("relocations.txt")
     project.plugins.withId("com.github.johnrengelman.shadow") {
@@ -84,6 +96,9 @@ private fun Project.createRelocationsFile(outputDir: File, extension: ZapperExte
     }
 }
 
+/**
+ * Generates the dependencies.txt file
+ */
 private fun createZappersFile(outputDir: File, runtimeLib: Configuration) {
     val runtimeLibsFile = outputDir.resolve("dependencies.txt")
     val runtimeLibDependencies = runtimeLib.resolvedConfiguration
@@ -93,10 +108,13 @@ private fun createZappersFile(outputDir: File, runtimeLib: Configuration) {
     runtimeLibsFile.writeText(runtimeLibDependencies)
 }
 
+/**
+ * Generates the repositories.txt file
+ */
 private fun Project.createRepositoriesFile(outputDir: File, extension: ZapperExtension) {
     val repositoriesFile = outputDir.resolve("repositories.txt")
     val repositories = extension.repositries.toMutableSet()
-    if (extension.useProjectRepositories) {
+    if (extension.includeProjectRepositories) {
         project.repositories.forEach {
             if (it is MavenArtifactRepository) {
                 repositories.add(it.url.toString())
@@ -106,6 +124,9 @@ private fun Project.createRepositoriesFile(outputDir: File, extension: ZapperExt
     repositoriesFile.writeText(repositories.joinToString("\n"))
 }
 
+/**
+ * Adds the Zapper API library
+ */
 private fun Project.addZapperDependencies() {
     dependencies.add("implementation", "io.github.revxrsal:zapper.api:${PLUGIN_VERSION}")
 }

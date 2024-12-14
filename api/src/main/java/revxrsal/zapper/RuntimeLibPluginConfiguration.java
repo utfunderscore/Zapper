@@ -80,7 +80,7 @@ public final class RuntimeLibPluginConfiguration {
 
     private static @NotNull Properties parseProperties() {
         Properties properties = new Properties();
-        try (InputStream stream = ClassLoaderReader.getResource("zapper/config.properties")) {
+        try (InputStream stream = ClassLoaderReader.getResource("zapper/zapper.properties")) {
             properties.load(stream);
         } catch (IOException e) {
             throw sneakyThrow(e);

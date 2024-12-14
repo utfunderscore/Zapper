@@ -1,38 +1,88 @@
 package revxrsal.zapper.gradle
 
+import org.gradle.api.Action
+
+/**
+ * The maven central repository, which is added by default.
+ */
+private const val MAVEN_CENTRAL = "https://repo.maven.apache.org/maven2/"
+
+/**
+ * Configure Zapper properties
+ */
 open class ZapperExtension {
 
+    /**
+     * The subfolder in the plugin directory where libraries
+     * should be installed
+     */
     var libsFolder: String = "libs"
+
+    /**
+     * The relocation prefix of all libraries
+     */
     var relocationPrefix: String = "zapperlib"
-    private var _repositories = mutableListOf<String>()
+
+    /**
+     * The repositories URLs
+     */
+    private var _repositories = mutableListOf<String>(MAVEN_CENTRAL)
+
+    /**
+     * The relocation rules
+     */
     private var _relocations = mutableListOf<Relocation>()
 
+    /**
+     * The currently added repositories
+     */
     val repositries: List<String> get() = _repositories
+
+    /**
+     * The current relocation rules
+     */
     val relocations: List<Relocation> get() = _relocations
 
-    internal var useProjectRepositories = false
+    /**
+     * Should project repositories be remembered for downloading
+     * repositories at runtime?
+     */
+    internal var includeProjectRepositories = false
 
-    fun repositories(configure: RepositoryDsl.() -> Unit) {
+    /**
+     * Configures the repositories that are used for downloading dependencies.
+     *
+     * See [RepositoryDsl]
+     */
+    fun repositories(configure: Action<RepositoryDsl>) {
         val dsl = BasicRepositoryDsl()
-        dsl.mavenCentral()
-        dsl.configure()
+        configure.execute(dsl)
         _repositories = dsl.repositories
-        useProjectRepositories = dsl.projectRepositories
+        includeProjectRepositories = dsl.includeProjectRepositories
     }
 
+    /**
+     * Adds a relocation rule
+     */
+    fun relocate(pattern: String, newPattern: String) {
+        _relocations.add(Relocation(pattern, newPattern))
+    }
+
+    /**
+     * A fancy toString implementation
+     */
     override fun toString(): String {
-        return "RuntimeLibsExtension(libsFolder='$libsFolder', useProjectRepositories=$useProjectRepositories, repositries=$repositries)"
+        return "RuntimeLibsExtension(libsFolder='$libsFolder', includeProjectRepositories=$includeProjectRepositories, repositries=$repositries)"
     }
 
+    /**
+     * Generates the content of the properties file of this extension
+     */
     internal fun toPropertiesFile(): String {
         //language=Properties
         return """
             libs-folder=${libsFolder}
             relocation-prefix=${relocationPrefix}
         """.trimIndent()
-    }
-
-    fun relocate(pattern: String, newPattern: String) {
-        _relocations.add(Relocation(pattern, newPattern))
     }
 }
