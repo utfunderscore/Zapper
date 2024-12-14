@@ -11,7 +11,7 @@ import org.gradle.kotlin.dsl.hasPlugin
 import org.gradle.kotlin.dsl.withType
 import java.io.File
 
-const val PLUGIN_VERSION: String = "1.0.0"
+const val PLUGIN_VERSION: String = "0.0.1"
 
 class ZapperPlugin : Plugin<Project> {
 
