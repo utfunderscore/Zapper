@@ -33,7 +33,7 @@ build.gradle:
 ```groovy
 plugins {
   id 'com.github.johnrengelman.shadow' version '8.1.1'
-  id 'io.github.revxrsal.zapper' version '1.0.0'
+  id 'io.github.revxrsal.zapper' version '0.0.1'
 }
 ```
 
@@ -42,7 +42,7 @@ build.gradle.kts:
 ```groovy
 plugins {
   id("com.github.johnrengelman.shadow") version "8.1.1"
-  id("io.github.revxrsal.zapper") version("1.0.0")
+  id("io.github.revxrsal.zapper") version("0.0.1")
 }
 ```
 
@@ -65,6 +65,9 @@ zapper {
     // directory to download dependencies in
     libsFolder = "libraries"
 
+    // the prefix for relocating libraries
+    relocationPrefix = "myplugin.libs"
+  
     // repositories to fetch dependencies from
     // 
     // by default: includes maven central
@@ -75,8 +78,12 @@ zapper {
 
         // optional: use all repositories declared in this
         // file if you don't want to re-include everything here
-        useProjectRepositories()
+        includeProjectRepositories()
     }
+  
+    // relocate libraries here
+    // com.squareup.moshi --> myplugin.libs.moshi
+    relocate("com.squareup.moshi", "moshi") 
 }
 ```
 
@@ -107,7 +114,7 @@ To add the Zapper API:
 <dependency>
     <groupId>io.github.revxrsal</groupId>
     <artifactId>zapper.api</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.1</version>
     <scope>compile</scope>
 </dependency>
 ```

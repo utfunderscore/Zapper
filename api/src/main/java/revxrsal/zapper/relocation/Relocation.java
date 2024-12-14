@@ -27,10 +27,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * Represents a relocation rule.
+ */
 public final class Relocation {
 
     private final String pattern;
     private final String newPattern;
+
+    public Relocation(@NotNull String pattern, @NotNull String newPattern) {
+        this.pattern = pattern;
+        this.newPattern = newPattern;
+    }
 
     public String getPattern() {
         return pattern;
@@ -40,23 +48,21 @@ public final class Relocation {
         return newPattern;
     }
 
-    public Relocation(@NotNull String pattern, @NotNull String newPattern) {
-        this.pattern = pattern;
-        this.newPattern = newPattern;
-    }
-
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return String.format("Relocation{pattern='%s', newPattern='%s'}", pattern, newPattern);
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Relocation)) return false;
         Relocation that = (Relocation) o;
         return Objects.equals(pattern, that.pattern) && Objects.equals(newPattern, that.newPattern);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hash(pattern, newPattern);
     }
 }

@@ -35,12 +35,18 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 
+/**
+ * A utility for accessing the data folder and the plugin.yml information
+ * from classloaders directly, without needing {@link org.bukkit.plugin.Plugin}
+ * instances.
+ */
 public final class ClassLoaderReader {
 
     private static final Field description, dataFolder;
     private static final Class<? extends URLClassLoader> PL_CL_LOADER;
 
-    private ClassLoaderReader() {}
+    private ClassLoaderReader() {
+    }
 
     public static @NotNull PluginDescriptionFile getDescription(@NotNull Class<?> cl) {
         ClassLoader classLoader = cl.getClassLoader();
@@ -83,6 +89,7 @@ public final class ClassLoaderReader {
             }
         }
     }
+
     static {
         try {
             PL_CL_LOADER = Class.forName("org.bukkit.plugin.java.PluginClassLoader")

@@ -9,6 +9,12 @@ import revxrsal.zapper.util.ClassLoaderReader;
 import java.io.File;
 import java.net.URLClassLoader;
 
+/**
+ * An extension of {@link JavaPlugin} that downloads dependencies at runtime.
+ * <p>
+ * This should only be used in tandem with the Gradle plugin! Please consult
+ * the documentation otherwise.
+ */
 public abstract class ZapperJavaPlugin extends JavaPlugin {
 
     static {

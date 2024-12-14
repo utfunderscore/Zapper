@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package revxrsal.zapper.util;
+package revxrsal.zapper.classloader;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -30,7 +30,7 @@ import sun.misc.Unsafe;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
-public final class ClassLoaderUtil {
+final class UnsafeUtil {
 
     private static final Supplier<Unsafe> Unsafe = Suppliers.memoize(() -> {
         try {
@@ -61,7 +61,7 @@ public final class ClassLoaderUtil {
             Field field = from.getDeclaredField(name);
             long offset = unsafe.objectFieldOffset(field);
             T value = (T) unsafe.getObject(instance, offset);
-            return Objects.requireNonNull(value, "getField(" + name + " from " + from + ")");
+            return Objects.requireNonNull(value, "getField(" + name + ") from " + from);
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }

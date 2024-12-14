@@ -30,8 +30,8 @@ import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.List;
 
-import static revxrsal.zapper.util.ClassLoaderUtil.getField;
-import static revxrsal.zapper.util.ClassLoaderUtil.isJava8;
+import static revxrsal.zapper.classloader.UnsafeUtil.getField;
+import static revxrsal.zapper.classloader.UnsafeUtil.isJava8;
 
 /**
  * An implementation that uses sun.misc.Unsafe to inject URLs

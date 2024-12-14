@@ -23,7 +23,6 @@
  */
 package revxrsal.zapper.relocation;
 
-
 import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.Dependency;
 import revxrsal.zapper.Repository;
@@ -38,8 +37,14 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * The relocator utility
+ */
 public final class Relocator {
+
+    private static boolean initialized = false;
 
     private Relocator() {
     }
@@ -50,14 +55,18 @@ public final class Relocator {
             new Dependency("me.lucko", "jar-relocator", "1.7")
     );
 
-    private static final Constructor<?> relocatorConstructor;
-    private static final Method relocateMethod;
+    private static Constructor<?> relocatorConstructor;
+    private static Method relocateMethod;
 
     public static void relocate(
             @NotNull File input,
             @NotNull File output,
             @NotNull List<Relocation> relocations
     ) {
+        if (!initialized) {
+            downloadJarRelocator(input.getParentFile());
+            initialized = true;
+        }
         try {
             Map<String, String> rules = new LinkedHashMap<>();
             for (Relocation relocation : relocations) {
@@ -70,11 +79,9 @@ public final class Relocator {
         }
     }
 
-    static {
+    private static void downloadJarRelocator(File dir) {
         try {
             URL[] urls = new URL[3];
-            File dataFolder = ClassLoaderReader.getDataFolder(Relocator.class);
-            File dir = new File(dataFolder, "libraries");
             dir.mkdirs();
             for (int i = 0; i < dependencies.size(); i++) {
                 Dependency d = dependencies.get(i);

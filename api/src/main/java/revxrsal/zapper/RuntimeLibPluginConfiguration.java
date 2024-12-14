@@ -30,22 +30,26 @@ public final class RuntimeLibPluginConfiguration {
     }
 
     public static @NotNull RuntimeLibPluginConfiguration parse() {
-        Properties config = parseProperties();
-        String libsFolder = config.getProperty("libs-folder");
-        String relocationPrefix = config.getProperty("relocation-prefix");
-        List<Repository> repositories = parseRepositories();
-        List<Dependency> dependencies = parseDependencies();
-        List<Relocation> relocations = parseRelocations();
-        return new RuntimeLibPluginConfiguration(
-                libsFolder,
-                relocationPrefix,
-                dependencies,
-                repositories,
-                relocations
-        );
+        try {
+            Properties config = parseProperties();
+            String libsFolder = config.getProperty("libs-folder");
+            String relocationPrefix = config.getProperty("relocation-prefix");
+            List<Repository> repositories = parseRepositories();
+            List<Dependency> dependencies = parseDependencies();
+            List<Relocation> relocations = parseRelocations();
+            return new RuntimeLibPluginConfiguration(
+                    libsFolder,
+                    relocationPrefix,
+                    dependencies,
+                    repositories,
+                    relocations
+            );
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Generated Zapper files are missing. Have you applied the Gradle plugin?");
+        }
     }
 
-    private static @NotNull List<Relocation> parseRelocations() {
+    private static @NotNull List<Relocation> parseRelocations() throws IOException {
         List<Relocation> relocations = new ArrayList<>();
         InputStream stream = ClassLoaderReader.getResource("zapper/relocations.txt");
         for (String line : readAllLines(stream)) {

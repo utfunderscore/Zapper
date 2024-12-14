@@ -26,6 +26,10 @@ package revxrsal.zapper.classloader;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+/**
+ * A {@link URLClassLoader} that is detatched from the entire plugin classloader.
+ * This is used for relocating
+ */
 public final class IsolatedClassLoader extends URLClassLoader {
 
     static {
