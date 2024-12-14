@@ -32,7 +32,8 @@ build.gradle:
 
 ```groovy
 plugins {
-    id 'io.github.revxrsal.zapper' version '1.0.0'
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
+  id 'io.github.revxrsal.zapper' version '1.0.0'
 }
 ```
 
@@ -40,7 +41,8 @@ build.gradle.kts:
 
 ```groovy
 plugins {
-    id("io.github.revxrsal.zapper") version("1.0.0")
+  id("com.github.johnrengelman.shadow") version "8.1.1"
+  id("io.github.revxrsal.zapper") version("1.0.0")
 }
 ```
 
@@ -87,6 +89,11 @@ public final class MyPlugin extends ZapperJavaPlugin {
     private final Moshi moshi;
 
 }
+```
+
+Finally, build with `shadowJar`:
+```shell
+./gradlew shadowJar
 ```
 
 ### With Maven
