@@ -21,46 +21,46 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package revxrsal.zapper;
+package revxrsal.zapper.repository;
 
 import org.jetbrains.annotations.NotNull;
+import revxrsal.zapper.Dependency;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
  * Represents a Maven repository with a URL
  */
-public class Repository {
+final class MavenRepository implements Repository {
 
-    private static final Repository MAVEN_CENTRAL = new Repository("https://repo1.maven.org/maven2/");
-    private static final Repository JITPACK = new Repository("https://jitpack.io/");
-    private static final Repository MINECRAFT = new Repository("https://libraries.minecraft.net/");
-    private static final Repository PAPER = new Repository("https://papermc.io/repo/repository/maven-public/");
+    private static final MavenRepository MAVEN_CENTRAL = new MavenRepository("https://repo1.maven.org/maven2/");
+    private static final MavenRepository JITPACK = new MavenRepository("https://jitpack.io/");
+    private static final MavenRepository MINECRAFT = new MavenRepository("https://libraries.minecraft.net/");
+    private static final MavenRepository PAPER = new MavenRepository("https://papermc.io/repo/repository/maven-public/");
 
-    public static @NotNull Repository mavenCentral() {
+    public static @NotNull MavenRepository mavenCentral() {
         return MAVEN_CENTRAL;
     }
 
-    public static @NotNull Repository jitpack() {
+    public static @NotNull MavenRepository jitpack() {
         return JITPACK;
     }
 
-    public static @NotNull Repository minecraft() {
+    public static @NotNull MavenRepository minecraft() {
         return MINECRAFT;
     }
 
-    public static @NotNull Repository paper() {
+    public static @NotNull MavenRepository paper() {
         return PAPER;
     }
 
-    public static @NotNull Repository maven(@NotNull String url) {
-        return new Repository(url);
+    public static @NotNull MavenRepository maven(@NotNull String url) {
+        return new MavenRepository(url);
     }
 
     private final String repoURL;
 
-    private Repository(@NotNull String repoURL) {
+    private MavenRepository(@NotNull String repoURL) {
         if (repoURL.charAt(repoURL.length() - 1) != '/')
             repoURL += '/';
         this.repoURL = repoURL;
@@ -70,12 +70,12 @@ public class Repository {
         return repoURL;
     }
 
-    public URL resolve(Dependency dependency) {
-        try {
-            return new URL(repoURL + dependency.getMavenPath());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public String toString() {
+        return getRepositoryURL();
     }
 
+    public @NotNull URL resolve(@NotNull Dependency dependency) throws Exception {
+        return new URL(repoURL + dependency.getMavenPath());
+    }
 }

@@ -25,9 +25,8 @@ package revxrsal.zapper.relocation;
 
 import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.Dependency;
-import revxrsal.zapper.Repository;
 import revxrsal.zapper.classloader.IsolatedClassLoader;
-import revxrsal.zapper.util.ClassLoaderReader;
+import revxrsal.zapper.repository.Repository;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -37,7 +36,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The relocator utility

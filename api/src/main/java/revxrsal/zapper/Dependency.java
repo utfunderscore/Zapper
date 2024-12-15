@@ -25,6 +25,7 @@ package revxrsal.zapper;
 
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
+import revxrsal.zapper.repository.Repository;
 
 import java.io.File;
 import java.io.InputStream;
@@ -75,7 +76,7 @@ public final class Dependency {
     }
 
     @CheckReturnValue
-    public @NotNull DependencyDownloadResult download(File file, Repository repository) {
+    public @NotNull DependencyDownloadResult download(@NotNull File file, @NotNull Repository repository) {
         try {
             if (!file.exists()) {
                 file.getParentFile().mkdirs();

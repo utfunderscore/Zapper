@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.classloader.URLClassLoaderWrapper;
 import revxrsal.zapper.relocation.Relocation;
 import revxrsal.zapper.relocation.Relocator;
+import revxrsal.zapper.repository.Repository;
 
 import java.io.File;
 import java.net.UnknownHostException;
@@ -69,7 +70,7 @@ public final class DependencyManager implements DependencyScope {
                         if (result.wasSuccessful())
                             break;
                         else
-                            (failedRepos == null ? failedRepos = new ArrayList<>() : failedRepos).add(repository.getRepositoryURL());
+                            (failedRepos == null ? failedRepos = new ArrayList<>() : failedRepos).add(repository.toString());
                     }
                     if (failedRepos != null) {
                         throw new DependencyDownloadException(dep, "Could not find dependency in any of the following repositories: " + String.join("\n", failedRepos));

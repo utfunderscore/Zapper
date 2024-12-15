@@ -2,6 +2,7 @@ package revxrsal.zapper;
 
 import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.relocation.Relocation;
+import revxrsal.zapper.repository.Repository;
 import revxrsal.zapper.util.ClassLoaderReader;
 
 import java.io.BufferedReader;
