@@ -1,5 +1,6 @@
 package revxrsal.zapper;
 
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.relocation.Relocation;
 import revxrsal.zapper.repository.Repository;
@@ -83,21 +84,17 @@ public final class RuntimeLibPluginConfiguration {
         return repos;
     }
 
-    private static @NotNull Properties parseProperties() {
+    private static @SneakyThrows @NotNull Properties parseProperties() {
         Properties properties = new Properties();
         try (InputStream stream = ClassLoaderReader.getResource("zapper/zapper.properties")) {
             properties.load(stream);
-        } catch (IOException e) {
-            throw sneakyThrow(e);
         }
         return properties;
     }
 
-    private static List<String> readAllLines(InputStream inputStream) {
+    private static @SneakyThrows @NotNull List<String> readAllLines(InputStream inputStream) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             return reader.lines().collect(Collectors.toList());
-        } catch (IOException e) {
-            throw sneakyThrow(e);
         }
     }
 
@@ -123,10 +120,5 @@ public final class RuntimeLibPluginConfiguration {
 
     public String toString() {
         return "RuntimeLibPluginConfiguration(libsFolder=" + this.getLibsFolder() + ", relocationPrefix=" + this.getRelocationPrefix() + ", dependencies=" + this.getDependencies() + ", repositories=" + this.getRepositories() + ", relocations=" + this.getRelocations() + ")";
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T extends Throwable> RuntimeException sneakyThrow(Throwable t) throws T {
-        throw (T) t;
     }
 }

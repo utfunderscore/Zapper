@@ -1,9 +1,11 @@
 package revxrsal.zapper.repository;
 
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.Dependency;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -46,10 +48,11 @@ public interface Repository {
      *
      * @return the local Maven repository
      */
+    @SneakyThrows
     static @NotNull Repository mavenLocal() {
         String userHome = System.getProperty("user.home");
-        File m2 = new File(userHome, ".m2");
-        return new LocalMavenRepository(m2);
+        File repository = new File(userHome, ".m2" + File.separator + "repository");
+        return maven(repository);
     }
 
     /**
@@ -58,8 +61,9 @@ public interface Repository {
      * @param directory the local Maven directory
      * @return the local Maven repository
      */
-    static @NotNull Repository mavenLocal(@NotNull File directory) {
-        return new LocalMavenRepository(directory);
+    @SneakyThrows
+    static @NotNull Repository maven(@NotNull File directory) {
+        return maven(directory.toURI().toURL().toString());
     }
 
     /**
