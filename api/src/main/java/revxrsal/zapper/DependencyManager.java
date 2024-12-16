@@ -55,6 +55,9 @@ public final class DependencyManager implements DependencyScope {
 
     public void load() {
         try {
+            if (repositories.isEmpty()) {
+                throw new IllegalArgumentException("No repositories were specified.");
+            }
             for (Dependency dep : dependencies) {
                 File file = new File(directory, String.format("%s.%s-%s.jar", dep.getGroupId(), dep.getArtifactId(), dep.getVersion()));
                 File relocated = new File(directory, String.format("%s.%s-%s-relocated.jar", dep.getGroupId(),
