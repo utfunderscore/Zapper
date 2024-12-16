@@ -16,7 +16,7 @@ plugins {
 }
 
 group = "io.github.revxrsal"
-version = "0.0.1"
+version = "0.0.2"
 
 subprojects {
 
