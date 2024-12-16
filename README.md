@@ -42,7 +42,7 @@ build.gradle.kts:
 ```groovy
 plugins {
   id("com.github.johnrengelman.shadow") version "8.1.1"
-  id("io.github.revxrsal.zapper") version("0.0.1")
+  id("io.github.revxrsal.zapper") version "0.0.1"
 }
 ```
 
@@ -50,17 +50,21 @@ Then, add your dependencies using the `zap` configuration:
 
 ```groovy
 dependencies {
-    // an example dependency
-    zap("com.squareup.moshi:moshi:1.15.2")
+  // an example dependency
+  zap("com.squareup.moshi:moshi:1.15.2")
 
-    // use the dependency notation as you would with other dependencies
-    zap("com.squareup.moshi", "moshi", "1.15.2")
+  // you can use the dependency notation and exclude modules as you
+  // would with other configurations
+  zap("com.squareup.moshi", "moshi", "1.15.2") {
+    exclude(module: "kotlin")
+  }
+  zap("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0")
 }
 ```
 
 You can provide additional configuration using the `zapper` extension:
 
-```groovy
+```kt
 zapper {
     // directory to download dependencies in
     libsFolder = "libraries"
