@@ -87,7 +87,7 @@ zapper {
   
     // relocate libraries here
     // com.squareup.moshi --> myplugin.libs.moshi
-    relocate("com.squareup.moshi", "moshi") 
+    relocate("com.squareup.moshi", "moshi")
 }
 ```
 
