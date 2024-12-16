@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.Dependency;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**

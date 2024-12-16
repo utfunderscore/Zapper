@@ -4,8 +4,6 @@ plugins {
     id("com.gradle.plugin-publish") version "1.2.1"
 }
 
-version = "0.0.1"
-
 repositories {
     mavenCentral()
     gradlePluginPortal()

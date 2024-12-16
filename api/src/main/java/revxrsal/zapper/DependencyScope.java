@@ -36,7 +36,7 @@ public interface DependencyScope {
      * Adds a dependency. The behavior varies depending on the implementation
      */
     void dependency(@NotNull Dependency dependency);
-    
+
     /**
      * Adds a dependency. The behavior varies depending on the implementation
      */

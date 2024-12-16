@@ -2,9 +2,6 @@ plugins {
     id("java")
 }
 
-group = "io.github.revxrsal"
-version = "1.0"
-
 repositories {
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")

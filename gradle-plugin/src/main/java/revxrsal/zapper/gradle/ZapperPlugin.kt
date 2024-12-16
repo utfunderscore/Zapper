@@ -1,13 +1,11 @@
 package revxrsal.zapper.gradle
 
-import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.hasPlugin
 import org.gradle.kotlin.dsl.withType
 import java.io.File
 
@@ -23,7 +21,7 @@ private const val PLUGIN_VERSION: String = "0.0.1"
 class ZapperPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        if (!project.plugins.hasPlugin(ShadowPlugin::class)) {
+        if (!project.plugins.hasPlugin("com.github.johnrengelman.shadow")) {
             error("ShadowJar is required by the Zapper Gradle plugin. Please add ShadowJar v8.11.0")
         }
 
