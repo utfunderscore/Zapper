@@ -46,7 +46,7 @@ plugins {
 }
 ```
 
-Then, add your dependencies using the `zap` configuration:
+Then, add your dependencies using the `zap` configuration block:
 
 ```groovy
 dependencies {
