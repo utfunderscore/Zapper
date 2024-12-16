@@ -33,7 +33,9 @@ import revxrsal.zapper.repository.Repository;
 import java.io.File;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public final class DependencyManager implements DependencyScope {
@@ -45,19 +47,17 @@ public final class DependencyManager implements DependencyScope {
     private final URLClassLoaderWrapper loaderWrapper;
 
     private final List<Dependency> dependencies = new ArrayList<>();
-    private final List<Repository> repositories = new ArrayList<>();
+    private final Set<Repository> repositories = new LinkedHashSet<>();
     private final List<Relocation> relocations = new ArrayList<>();
 
     public DependencyManager(@NotNull File directory, @NotNull URLClassLoaderWrapper loaderWrapper) {
         this.directory = directory;
         this.loaderWrapper = loaderWrapper;
+        this.repositories.add(Repository.mavenCentral());
     }
 
     public void load() {
         try {
-            if (repositories.isEmpty()) {
-                throw new IllegalArgumentException("No repositories were specified.");
-            }
             for (Dependency dep : dependencies) {
                 File file = new File(directory, String.format("%s.%s-%s.jar", dep.getGroupId(), dep.getArtifactId(), dep.getVersion()));
                 File relocated = new File(directory, String.format("%s.%s-%s-relocated.jar", dep.getGroupId(),

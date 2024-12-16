@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.Dependency;
 
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Represents a Maven repository with a URL
@@ -77,5 +78,17 @@ final class MavenRepository implements Repository {
 
     public @NotNull URL resolve(@NotNull Dependency dependency) throws Exception {
         return new URL(repoURL + dependency.getMavenPath());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        MavenRepository that = (MavenRepository) o;
+        return Objects.equals(repoURL, that.repoURL);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(repoURL);
     }
 }
