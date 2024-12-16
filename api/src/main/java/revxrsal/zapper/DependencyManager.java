@@ -1,5 +1,5 @@
 /*
- * This file is part of WorldCleaner, licensed under the MIT License.
+ * This file is part of Zapper, licensed under the MIT License.
  *
  *  Copyright (c) Revxrsal <reflxction.github@gmail.com>
  *
@@ -87,7 +87,7 @@ public final class DependencyManager implements DependencyScope {
             }
         } catch (DependencyDownloadException e) {
             if (e.getCause() instanceof UnknownHostException) {
-                Bukkit.getLogger().info("[WorldCleaner] It appears you do not have an internet connection. Extract the zip in https://bit.ly/3cd3wGe at /WorldCleaner/libraries.");
+                Bukkit.getLogger().info("[Zapper] It appears you do not have an internet connection. Extract the zip in https://bit.ly/3cd3wGe at /Zapper/libraries.");
                 FAILED_TO_DOWNLOAD = true;
             } else throw e;
         } catch (RuntimeException d) {

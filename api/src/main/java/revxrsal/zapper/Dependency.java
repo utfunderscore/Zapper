@@ -1,5 +1,5 @@
 /*
- * This file is part of WorldCleaner, licensed under the MIT License.
+ * This file is part of Zapper, licensed under the MIT License.
  *
  *  Copyright (c) Revxrsal <reflxction.github@gmail.com>
  *
