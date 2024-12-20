@@ -54,10 +54,13 @@ public final class RuntimeLibPluginConfiguration {
     private static @NotNull List<Relocation> parseRelocations() throws IOException {
         List<Relocation> relocations = new ArrayList<>();
         InputStream stream = ClassLoaderReader.getResource("zapper/relocations.txt");
-        for (String line : readAllLines(stream)) {
-            String[] split = line.split(":");
-            relocations.add(new Relocation(split[0], split[1]));
+        if(stream != null) {
+            for (String line : readAllLines(stream)) {
+                String[] split = line.split(":");
+                relocations.add(new Relocation(split[0], split[1]));
+            }
         }
+
         return relocations;
     }
 
