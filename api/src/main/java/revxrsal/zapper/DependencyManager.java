@@ -82,8 +82,10 @@ public final class DependencyManager implements DependencyScope {
                 if (!relocations.isEmpty() && !relocated.exists()) {
                     Relocator.relocate(file, relocated, relocations);
                     file.delete(); // no longer need the original dependency
+                    loaderWrapper.addURL(relocated.toURI().toURL());
+                } else {
+                    loaderWrapper.addURL(file.toURI().toURL());
                 }
-                loaderWrapper.addURL(relocated.toURI().toURL());
             }
         } catch (DependencyDownloadException e) {
             if (e.getCause() instanceof UnknownHostException) {
