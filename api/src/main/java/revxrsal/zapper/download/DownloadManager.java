@@ -26,8 +26,6 @@ public class DownloadManager {
         try {
             URL url = repository.resolve(dependency);
 
-            System.out.println(url.toExternalForm());
-
             URLConnection connection = url.openConnection();
 
             int length = connection.getContentLength();

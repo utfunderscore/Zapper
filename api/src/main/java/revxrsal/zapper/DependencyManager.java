@@ -100,8 +100,6 @@ public final class DependencyManager implements DependencyScope {
 
                     @NotNull ActiveDownload result = downloadManager.download(dep, fileStream, repository);
                     activeDownloads.put(dep, result);
-
-                    System.out.printf("Downloading %s (%s) from %s %n", dep.getMavenPath(), result.getSize(), repository.toString());
                 }
 
                 Stream<CompletableFuture<DependencyDownloadResult>> stream = activeDownloads.values().stream().map(ActiveDownload::getDownloadResultFuture);
@@ -142,9 +140,6 @@ public final class DependencyManager implements DependencyScope {
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
-
-        System.out.printf("Downloaded in %s ms%n", System.currentTimeMillis() - start);
-
     }
 
     public void load() {
