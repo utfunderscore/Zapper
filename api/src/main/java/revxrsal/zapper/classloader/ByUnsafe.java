@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static revxrsal.zapper.classloader.UnsafeUtil.getField;
-import static revxrsal.zapper.classloader.UnsafeUtil.isJava8;
 
 /**
  * An implementation that uses sun.misc.Unsafe to inject URLs
@@ -43,7 +42,7 @@ final class ByUnsafe extends URLClassLoaderWrapper {
 
     public ByUnsafe(@NotNull URLClassLoader loader) {
         Object ucp = getField(loader, "ucp", URLClassLoader.class);
-        unopenedURLs = getField(ucp, isJava8() ? "urls" : "unopenedUrls", ucp.getClass());
+        unopenedURLs = getField(ucp, UnsafeUtil.isJava8 ? "urls" : "unopenedUrls", ucp.getClass());
         pathURLs = getField(ucp, "path", ucp.getClass());
     }
 

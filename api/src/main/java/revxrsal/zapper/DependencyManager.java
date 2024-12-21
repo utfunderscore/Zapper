@@ -23,7 +23,6 @@
  */
 package revxrsal.zapper;
 
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.classloader.URLClassLoaderWrapper;
 import revxrsal.zapper.relocation.Relocation;
@@ -89,7 +88,7 @@ public final class DependencyManager implements DependencyScope {
             }
         } catch (DependencyDownloadException e) {
             if (e.getCause() instanceof UnknownHostException) {
-                Bukkit.getLogger().info("[Zapper] It appears you do not have an internet connection. Extract the zip in https://bit.ly/3cd3wGe at /Zapper/libraries.");
+                System.err.println("It appears you do not have an internet connection. Extract the zip in https://bit.ly/3cd3wGe at /Zapper/libraries.");
                 FAILED_TO_DOWNLOAD = true;
             } else throw e;
         } catch (RuntimeException d) {

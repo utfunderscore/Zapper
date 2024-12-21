@@ -23,51 +23,17 @@
  */
 package revxrsal.zapper.util;
 
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLConnection;
 
-/**
- * A utility for accessing the data folder and the plugin.yml information
- * from classloaders directly, without needing {@link org.bukkit.plugin.Plugin}
- * instances.
- */
+
 public final class ClassLoaderReader {
 
-    private static final Field description, dataFolder;
-    private static final Class<? extends URLClassLoader> PL_CL_LOADER;
-
     private ClassLoaderReader() {
-    }
-
-    public static @NotNull PluginDescriptionFile getDescription(@NotNull Class<?> cl) {
-        ClassLoader classLoader = cl.getClassLoader();
-        if (!PL_CL_LOADER.isAssignableFrom(classLoader.getClass()))
-            throw new UnsupportedOperationException("Class is not a plugin class");
-        try {
-            return (PluginDescriptionFile) description.get(classLoader);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static @NotNull File getDataFolder(@NotNull Class<?> cl) {
-        ClassLoader classLoader = cl.getClassLoader();
-        if (!PL_CL_LOADER.isAssignableFrom(classLoader.getClass()))
-            throw new UnsupportedOperationException("Class is not a plugin class");
-        try {
-            return (File) dataFolder.get(classLoader);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Contract("null -> fail")
@@ -87,20 +53,6 @@ public final class ClassLoaderReader {
             } catch (IOException var4) {
                 return null;
             }
-        }
-    }
-
-    static {
-        try {
-            PL_CL_LOADER = Class.forName("org.bukkit.plugin.java.PluginClassLoader")
-                    .asSubclass(URLClassLoader.class);
-            description = PL_CL_LOADER.getDeclaredField("description");
-            description.setAccessible(true);
-
-            dataFolder = PL_CL_LOADER.getDeclaredField("dataFolder");
-            dataFolder.setAccessible(true);
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
         }
     }
 }
