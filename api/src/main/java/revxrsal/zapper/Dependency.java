@@ -25,6 +25,7 @@ package revxrsal.zapper;
 
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
+import revxrsal.zapper.download.DependencyDownloadResult;
 import revxrsal.zapper.repository.Repository;
 
 import java.io.File;
@@ -73,30 +74,6 @@ public final class Dependency {
     @Override
     public int hashCode() {
         return Objects.hash(groupId, artifactId, version);
-    }
-
-    @CheckReturnValue
-    public @NotNull DependencyDownloadResult download(@NotNull File file, @NotNull Repository repository) {
-        try {
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-            URL url = repository.resolve(this);
-            try (InputStream depIn = url.openStream()) {
-                try (OutputStream outStream = Files.newOutputStream(file.toPath())) {
-                    byte[] buffer = new byte[8 * 1024];
-                    int bytesRead;
-                    while ((bytesRead = depIn.read(buffer)) != -1) {
-                        outStream.write(buffer, 0, bytesRead);
-                    }
-                }
-            }
-            return DependencyDownloadResult.success();
-        } catch (Throwable t) {
-            file.delete();
-            return DependencyDownloadResult.failure(t);
-        }
     }
 
     public String getGroupId() {

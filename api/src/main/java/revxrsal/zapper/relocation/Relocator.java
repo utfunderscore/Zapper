@@ -26,9 +26,12 @@ package revxrsal.zapper.relocation;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.Dependency;
 import revxrsal.zapper.classloader.IsolatedClassLoader;
+import revxrsal.zapper.download.DependencyDownloadResult;
+import revxrsal.zapper.download.DownloadManager;
 import revxrsal.zapper.repository.Repository;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -57,12 +60,13 @@ public final class Relocator {
     private static Method relocateMethod;
 
     public static void relocate(
+            @NotNull DownloadManager downloadManager,
             @NotNull File input,
             @NotNull File output,
             @NotNull List<Relocation> relocations
     ) {
         if (!initialized) {
-            downloadJarRelocator(input.getParentFile());
+            downloadJarRelocator(downloadManager, input.getParentFile());
             initialized = true;
         }
         try {
@@ -77,15 +81,25 @@ public final class Relocator {
         }
     }
 
-    private static void downloadJarRelocator(File dir) {
+    private static void downloadJarRelocator(DownloadManager downloadManager, File dir) {
         try {
             URL[] urls = new URL[3];
             dir.mkdirs();
             for (int i = 0; i < dependencies.size(); i++) {
                 Dependency d = dependencies.get(i);
                 File file = new File(dir, String.format("%s.%s-%s.jar", d.getGroupId(), d.getArtifactId(), d.getVersion()));
-                if (!file.exists())
-                    d.download(file, Repository.mavenCentral());
+                if (!file.exists()) {
+                    if (!file.createNewFile()) {
+                        throw new RuntimeException("Could not create " + file.getAbsolutePath());
+                    }
+                    FileOutputStream out = new FileOutputStream(file);
+                    DependencyDownloadResult result = downloadManager.download(d, out, Repository.mavenCentral()).getDownloadResultFuture().get();
+                    if(!result.wasSuccessful()) {
+                        file.delete();
+                        throw new RuntimeException("Could not download " + file.getAbsolutePath());
+                    }
+
+                }
                 urls[i] = file.toURI().toURL();
             }
             IsolatedClassLoader classLoader = new IsolatedClassLoader(urls);

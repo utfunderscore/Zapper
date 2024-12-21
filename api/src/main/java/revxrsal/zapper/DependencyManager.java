@@ -23,19 +23,28 @@
  */
 package revxrsal.zapper;
 
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.zapper.classloader.URLClassLoaderWrapper;
+import revxrsal.zapper.download.ActiveDownload;
+import revxrsal.zapper.download.DependencyDownloadException;
+import revxrsal.zapper.download.DependencyDownloadResult;
+import revxrsal.zapper.download.DownloadManager;
 import revxrsal.zapper.relocation.Relocation;
 import revxrsal.zapper.relocation.Relocator;
 import revxrsal.zapper.repository.Repository;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class DependencyManager implements DependencyScope {
 
@@ -43,16 +52,99 @@ public final class DependencyManager implements DependencyScope {
     private static final Pattern COLON = Pattern.compile(":");
 
     private final File directory;
+    private final DownloadManager downloadManager;
     private final URLClassLoaderWrapper loaderWrapper;
 
     private final List<Dependency> dependencies = new ArrayList<>();
     private final Set<Repository> repositories = new LinkedHashSet<>();
     private final List<Relocation> relocations = new ArrayList<>();
 
-    public DependencyManager(@NotNull File directory, @NotNull URLClassLoaderWrapper loaderWrapper) {
+    public DependencyManager(@NotNull File directory, @NotNull DownloadManager downloadManager, @NotNull URLClassLoaderWrapper loaderWrapper) {
         this.directory = directory;
         this.loaderWrapper = loaderWrapper;
+        this.downloadManager = downloadManager;
         this.repositories.add(Repository.mavenCentral());
+    }
+
+    public void loadParallel() {
+
+        long start = System.currentTimeMillis();
+        try {
+            directory.mkdirs();
+
+            val pendingDownload = new ArrayList<>(dependencies);
+
+            for (Repository repository : repositories) {
+
+                Map<Dependency, ActiveDownload> activeDownloads = new HashMap<>();
+
+                for (Dependency dep : pendingDownload) {
+
+                    String dependencyName = String.format("%s.%s-%s", dep.getGroupId(), dep.getArtifactId(), dep.getVersion());
+
+                    File file = new File(directory, dependencyName + ".jar");
+                    File relocated = new File(directory, dependencyName + "-relocated.jar");
+                    if (relocated.exists()) {
+                        loaderWrapper.addURL(relocated.toURI().toURL());
+                        continue;
+                    }
+
+                    if (!file.exists()) {
+                        if (!file.createNewFile()) {
+                            throw new RuntimeException("Failed to download dependency.");
+                        }
+                    }
+
+                    FileOutputStream fileStream = new FileOutputStream(file);
+
+
+                    @NotNull ActiveDownload result = downloadManager.download(dep, fileStream, repository);
+                    activeDownloads.put(dep, result);
+
+                    System.out.printf("Downloading %s (%s) from %s %n", dep.getMavenPath(), result.getSize(), repository.toString());
+                }
+
+                Stream<CompletableFuture<DependencyDownloadResult>> stream = activeDownloads.values().stream().map(ActiveDownload::getDownloadResultFuture);
+                CompletableFuture<Void> downloadCompleteFuture = CompletableFuture.allOf(stream.toArray(CompletableFuture[]::new));
+                downloadCompleteFuture.join();
+
+                for (Map.Entry<Dependency, ActiveDownload> entry : activeDownloads.entrySet()) {
+                    Dependency dep = entry.getKey();
+                    ActiveDownload resultFuture = entry.getValue();
+
+                    DependencyDownloadResult downloadResult = resultFuture.getDownloadResultFuture().join();
+                    if (downloadResult.wasSuccessful()) {
+                        pendingDownload.remove(dep);
+
+                        File file = new File(directory, String.format("%s.%s-%s.jar", dep.getGroupId(), dep.getArtifactId(), dep.getVersion()));
+                        File relocated = new File(directory, String.format("%s.%s-%s-relocated.jar", dep.getGroupId(),
+                                dep.getArtifactId(), dep.getVersion()));
+
+                        if (!relocations.isEmpty() && !relocated.exists()) {
+                            Relocator.relocate(downloadManager, file, relocated, relocations);
+                            file.delete(); // no longer need the original dependency
+                            loaderWrapper.addURL(relocated.toURI().toURL());
+                        } else {
+                            loaderWrapper.addURL(file.toURI().toURL());
+                        }
+                    }
+                }
+            }
+
+
+        } catch (DependencyDownloadException e) {
+            if (e.getCause() instanceof UnknownHostException) {
+                System.err.println("It appears you do not have an internet connection. Extract the zip in https://bit.ly/3cd3wGe at /Zapper/libraries.");
+                FAILED_TO_DOWNLOAD = true;
+            } else throw e;
+        } catch (RuntimeException d) {
+            throw d;
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+
+        System.out.printf("Downloaded in %s ms%n", System.currentTimeMillis() - start);
+
     }
 
     public void load() {
@@ -68,7 +160,16 @@ public final class DependencyManager implements DependencyScope {
                 if (!file.exists()) {
                     List<String> failedRepos = null;
                     for (Repository repository : repositories) {
-                        DependencyDownloadResult result = dep.download(file, repository);
+                        if (!file.exists()) {
+                            if (!file.createNewFile()) {
+                                throw new RuntimeException("Failed to download dependency.");
+                            }
+                        }
+
+                        FileOutputStream fileStream = new FileOutputStream(file);
+
+
+                        DependencyDownloadResult result = downloadManager.download(dep, fileStream, repository).getDownloadResultFuture().join();
                         if (result.wasSuccessful())
                             break;
                         else
@@ -79,7 +180,7 @@ public final class DependencyManager implements DependencyScope {
                     }
                 }
                 if (!relocations.isEmpty() && !relocated.exists()) {
-                    Relocator.relocate(file, relocated, relocations);
+                    Relocator.relocate(downloadManager, file, relocated, relocations);
                     file.delete(); // no longer need the original dependency
                     loaderWrapper.addURL(relocated.toURI().toURL());
                 } else {

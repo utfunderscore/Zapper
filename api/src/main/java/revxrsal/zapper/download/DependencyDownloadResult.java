@@ -1,4 +1,4 @@
-package revxrsal.zapper;
+package revxrsal.zapper.download;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

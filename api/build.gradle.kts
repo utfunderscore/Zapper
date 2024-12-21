@@ -12,4 +12,9 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
     compileOnly("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.2")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

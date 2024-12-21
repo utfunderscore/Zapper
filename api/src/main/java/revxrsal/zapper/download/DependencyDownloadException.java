@@ -21,9 +21,10 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package revxrsal.zapper;
+package revxrsal.zapper.download;
 
 import org.jetbrains.annotations.NotNull;
+import revxrsal.zapper.Dependency;
 
 /**
  * An exception thrown when a dependency fails to download.
