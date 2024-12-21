@@ -23,8 +23,7 @@
  */
 package revxrsal.zapper.classloader;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
+import lombok.Getter;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -32,7 +31,16 @@ import java.util.Objects;
 
 final class UnsafeUtil {
 
-    private static final Supplier<Unsafe> Unsafe = Suppliers.memoize(() -> {
+
+    public static Unsafe unsafe;
+    public static boolean isJava8;
+
+    static {
+        unsafe = retrieveUnsafe();
+        isJava8 = determineIsJava8();
+    }
+
+    private static Unsafe retrieveUnsafe()  {
         try {
             Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
             field.setAccessible(true);
@@ -40,24 +48,15 @@ final class UnsafeUtil {
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
-    });
-
-    private static final Supplier<Boolean> isJava8 = Suppliers.memoize(() -> {
-        String version = System.getProperty("java.version");
-        return version.contains("1.8");
-    });
-
-    public static Unsafe getUnsafe() {
-        return Unsafe.get();
     }
 
-    public static boolean isJava8() {
-        return isJava8.get();
+    private static boolean determineIsJava8() {
+        String version = System.getProperty("java.version");
+        return version.contains("1.8");
     }
 
     public static <T> T getField(Object instance, String name, Class<?> from) {
         try {
-            Unsafe unsafe = Unsafe.get();
             Field field = from.getDeclaredField(name);
             long offset = unsafe.objectFieldOffset(field);
             T value = (T) unsafe.getObject(instance, offset);
