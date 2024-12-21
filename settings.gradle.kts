@@ -5,6 +5,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
 include("api")
 include("gradle-plugin")
+include("bukkit")
+include("standalone")
